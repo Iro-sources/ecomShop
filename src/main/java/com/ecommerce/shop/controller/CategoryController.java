@@ -9,9 +9,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@RestController//Spring discovers it and uses its mapped methods to handle incoming HTTP requests.
+@RestController
+@RequestMapping("/api")
+//Spring discovers it and uses its mapped methods to handle incoming HTTP requests.
 //The methods return response data directly. For example, when the Controller returns a List<Category>,
 // Spring can serialize it into JSON for the client.
+
 public class CategoryController {
     private CategoryService categoryService;
 
@@ -20,19 +23,19 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/api/public/categories")
+    @GetMapping("/public/categories")
     public ResponseEntity<List<Category>> getAllCategories(){
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("/api/public/categories")
+    @PostMapping("/public/categories")
     public ResponseEntity<String> createCategory(@RequestBody Category category){
         categoryService.createCategory(category);
         return new ResponseEntity<>("Category was added successfully", HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/admin/categories/{categoryId}")
+    @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
         try {
             String status = categoryService.deleteCategory(categoryId);
@@ -42,7 +45,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/api/public/categories/{categoryId}")
+    @PutMapping("/public/categories/{categoryId}")
     public ResponseEntity<String> updateCategory(@RequestBody Category category, @PathVariable Long categoryId){
         try {
             Category savedCategory = categoryService.updateCategory(category, categoryId);
