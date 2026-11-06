@@ -1,4 +1,6 @@
 package com.ecommerce.shop.service;
+import com.ecommerce.shop.exceptions.ApiException;
+import com.ecommerce.shop.exceptions.ResourceNotFoundException;
 import com.ecommerce.shop.model.Category;
 import com.ecommerce.shop.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,12 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public List<Category> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        if (categories.isEmpty())
+            throw new ApiException("Sorry, there are no categories in the system");
         //return categories;
-        return categoryRepository.findAll();
+        return categories;
+
     }
 
     @Override
@@ -31,6 +37,10 @@ public class CategoryServiceImpl implements CategoryService{
         //enabling dynamic id for the application
        // category.setCategoryId(nextCategoryId ++);
         //categories.add(category);
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if (savedCategory != null)
+            throw new ApiException("Category with the name " + category.getCategoryName() + " already exists");
+        category.setCategoryId(null);
         categoryRepository.save(category);
     }
 
@@ -38,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService{
     public String deleteCategory(Long categoryId){
         //We need to create a list of local variable in order to use the categories saved in  category repository
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         //categories.remove(category);
         categoryRepository.delete(category);
@@ -49,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService{
     public Category updateCategory(Category category, Long categoryId) {
 
         Category savedCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         category.setCategoryId(categoryId);
         savedCategory = categoryRepository.save(category);
