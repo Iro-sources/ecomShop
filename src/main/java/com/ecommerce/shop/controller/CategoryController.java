@@ -1,5 +1,7 @@
 package com.ecommerce.shop.controller;
 import com.ecommerce.shop.model.Category;
+import com.ecommerce.shop.payload.CategoryDTO;
+import com.ecommerce.shop.payload.CategoryResponse;
 import com.ecommerce.shop.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,9 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<Category>> fetchAllCategories(){
-        List<Category> categories = categoryService.getAllCategories(); //	Calls the service method
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> fetchAllCategories(){
+        CategoryResponse categoryResponse = categoryService.getAllCategories(); //	Calls the service method
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
@@ -36,9 +38,9 @@ public class CategoryController {
     // binding request parameters instead of reading the JSON body in the usual way.
     //@Valid triggers validation of that object.
     //ResponseEntity<String> means the method returns an HTTP response containing a String body
-    public ResponseEntity<String> addNewCategory(@Valid @RequestBody Category category){
-        categoryService.createCategory(category); //	Calls the service method
-        return new ResponseEntity<>("Category was added successfully", HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> addNewCategory(@Valid @RequestBody CategoryDTO categoryDTO){
+        CategoryDTO savedCategoryDTO = categoryService.createCategory(categoryDTO); //	Calls the service method
+        return new ResponseEntity<>(savedCategoryDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")
