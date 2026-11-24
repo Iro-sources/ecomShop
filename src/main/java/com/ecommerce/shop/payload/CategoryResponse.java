@@ -10,4 +10,10 @@ import java.util.List;
 //This class represents a response containing multiple categories.
 public class CategoryResponse {
     private List<CategoryDTO> content;
+
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private int totalPages;
+    private boolean lastPage;
 }
